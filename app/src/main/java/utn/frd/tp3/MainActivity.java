@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Handler del botón
-        findViewById(R.id.btnEjecutar).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnIngresar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new MiAsyncTask().execute();
