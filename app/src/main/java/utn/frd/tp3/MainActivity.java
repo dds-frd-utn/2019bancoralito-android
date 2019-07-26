@@ -2,15 +2,19 @@ package utn.frd.tp3;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-import android.widget.EditText;
 
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -24,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnIngresar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MiAsyncTask().execute();
+                //new MiAsyncTask().execute();
+                Intent i = new Intent(MainActivity.this, Inicio.class);
+                startActivity(i);
             }
 
         });
@@ -35,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             return RESTService.makeGetRequest(
-                    "https://jsonplaceholder.typicode.com/posts/1");
+                    "http://localhost:8080/tp2019/rest/cliente/1");
         }
 
         @Override
@@ -78,6 +84,56 @@ public class MainActivity extends AppCompatActivity {
             }
             return result;
 
+        }
+        public static String callREST(String restURL, String method, JSONObject jsonParam){
+            String result = "";
+
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                url = new URL( restURL );
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod( method );
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+                urlConnection.setFixedLengthStreamingMode(
+                        jsonParam.toString().getBytes().length);
+
+                urlConnection.setRequestProperty(
+                        "Content-Type", "application/json;charset=utf-8");
+                urlConnection.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                urlConnection.connect();
+
+                OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
+                os.write(jsonParam.toString().getBytes());
+                os.flush();
+
+                InputStream inputStream = urlConnection.getInputStream();
+
+                BufferedReader bReader = new BufferedReader(
+                        new InputStreamReader(inputStream, "utf-8"), 8);
+                StringBuilder sBuilder = new StringBuilder();
+
+                String line = null;
+                while ((line = bReader.readLine()) != null) {
+                    sBuilder.append(line + "\n");
+                }
+
+                inputStream.close();
+
+                result = sBuilder.toString();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return e.getLocalizedMessage();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            return result;
         }
 
     }

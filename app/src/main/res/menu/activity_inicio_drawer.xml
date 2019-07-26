@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_cuentas"
+            android:title="Cuentas"
+            />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_menu_transferencias"
+            android:title="Transferencias" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_menu_compras"
+            android:title="Compras" />
+        <item
+            android:id="@+id/nav_tools"
+            android:icon="@drawable/ic_menu_bonos"
+            android:title="Bonos" />
+    </group>
+
+    <item android:title="Mi perfil">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Cambiar contraseña" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Salir" />
+        </menu>
+    </item>
+
+</menu>
