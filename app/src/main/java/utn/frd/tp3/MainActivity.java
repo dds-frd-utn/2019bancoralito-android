@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
@@ -19,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnIngresar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //new MiAsyncTask().execute();
+                String urlCliente = new Datos().getUrlRalito() + "/cliente/39387297";
+
+                new MiAsyncTask().execute(urlCliente,"GET");
+
                 Intent i = new Intent(MainActivity.this, Inicio.class);
                 startActivity(i);
             }
@@ -36,12 +39,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public static class Datos{
+        String urlRalito = "http://192.168.0.47:8080/tp2019/rest";
+        String urlEsferopolis = "http://lsi.no-ip.org:8282/esferopolis/api";
+        int idCliente = 65;
+        String du = "623";
 
-    private class MiAsyncTask extends AsyncTask<String, String, String> {
+        public String getUrlRalito() {
+            return urlRalito;
+        }
+
+        public int getIdCliente() {
+            return idCliente;
+        }
+        public String getIdClienteString() {
+            return String.valueOf(this.idCliente);
+        }
+
+        public String getUrlEsferopolis() {
+            return urlEsferopolis;
+        }
+
+        public String getDu() {
+            return du;
+        }
+    }
+    public class MiAsyncTask extends AsyncTask<String, String, String> {
         @Override
-        protected String doInBackground(String... strings) {
-            return RESTService.makeGetRequest(
-                    "http://localhost:8080/tp2019/rest/cliente/1");
+        protected String doInBackground(String... strings){
+            String method = strings[1];
+            if(method == "GET"){
+                return RESTService.makeGetRequest(strings[0]);
+            }else{
+                String jsonParam = strings[2];
+                return RESTService.callREST(strings[0],strings[1],jsonParam);
+            }
         }
 
         @Override
@@ -52,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static class RESTService{
+    public static class RESTService{
         public static String makeGetRequest(String restURL){
 
             String result = "";
@@ -85,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             return result;
 
         }
-        public static String callREST(String restURL, String method, JSONObject jsonParam){
+        public static String callREST(String restURL, String method, String jsonParam){
             String result = "";
 
             URL url;
@@ -97,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 urlConnection.setDoInput(true);
                 urlConnection.setDoOutput(true);
                 urlConnection.setFixedLengthStreamingMode(
-                        jsonParam.toString().getBytes().length);
+                        jsonParam.getBytes().length);
 
                 urlConnection.setRequestProperty(
                         "Content-Type", "application/json;charset=utf-8");
@@ -106,27 +138,24 @@ public class MainActivity extends AppCompatActivity {
                 urlConnection.connect();
 
                 OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
-                os.write(jsonParam.toString().getBytes());
+                os.write(jsonParam.getBytes());
                 os.flush();
 
-                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder sBuilder;
+                InputStream inputStream;
+                inputStream= urlConnection.getInputStream();
 
-                BufferedReader bReader = new BufferedReader(
-                        new InputStreamReader(inputStream, "utf-8"), 8);
-                StringBuilder sBuilder = new StringBuilder();
-
+                BufferedReader bReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 5);
+                sBuilder = new StringBuilder();
                 String line = null;
                 while ((line = bReader.readLine()) != null) {
                     sBuilder.append(line + "\n");
                 }
-
-                inputStream.close();
-
                 result = sBuilder.toString();
 
             } catch (Exception e) {
                 e.printStackTrace();
-                return e.getLocalizedMessage();
+                return e.getMessage();
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

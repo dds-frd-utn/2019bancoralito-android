@@ -1,5 +1,6 @@
 package utn.frd.tp3;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,7 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 
 public class Inicio extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +86,20 @@ public class Inicio extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_cuentas) {
+            Intent i = new Intent(Inicio.this, Cuentas.class);
+            startActivity(i);
+        } else if (id == R.id.nav_transferencias) {
+            Intent i = new Intent(Inicio.this, Transferencias.class);
+            startActivity(i);
+        } else if (id == R.id.nav_compras) {
+            Intent i = new Intent(Inicio.this, Compras.class);
+            startActivity(i);
+        } else if (id == R.id.nav_bonos) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_change_password) {
 
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_salir) {
 
         }
 
