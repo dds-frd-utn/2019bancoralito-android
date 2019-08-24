@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -32,18 +34,19 @@ public class MainActivity extends AppCompatActivity {
 
                 new MiAsyncTask().execute(urlCliente,"GET");
 
-                Intent i = new Intent(MainActivity.this, Inicio.class);
-                startActivity(i);
             }
 
         });
 
     }
+    //Datos hardcodeados para pruebas
     public static class Datos{
         String urlRalito = "http://192.168.0.47:8080/tp2019/rest";
         String urlEsferopolis = "http://lsi.no-ip.org:8282/esferopolis/api";
-        int idCliente = 65;
-        String du = "623";
+
+        int idCliente = 66;
+        int idCuenta = 27;
+        String du = "619";
 
         public String getUrlRalito() {
             return urlRalito;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         public int getIdCliente() {
             return idCliente;
         }
+
         public String getIdClienteString() {
             return String.valueOf(this.idCliente);
         }
@@ -62,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
         public String getDu() {
             return du;
+        }
+
+        public int getIdCuenta() {
+            return idCuenta;
         }
     }
     public class MiAsyncTask extends AsyncTask<String, String, String> {
@@ -78,9 +86,26 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast notificacion = Toast.makeText(
-                    getApplicationContext(), result, Toast.LENGTH_LONG);
-            notificacion.show();
+            try{
+                Toast notificacion = Toast.makeText(
+                getApplicationContext(), result, Toast.LENGTH_LONG);
+                notificacion.show();
+
+                JSONObject jsonResponse = new JSONObject(result);
+                if(jsonResponse.has("flag_error")){
+                    if(jsonResponse.getInt("flag_error") == 0){
+                        result = jsonResponse.getString("nombre")+" / "+jsonResponse.getString("email")+" / DU:" + jsonResponse.getString("du");
+                    }else {
+                        result = jsonResponse.toString();
+                    }
+                }
+
+                Intent i = new Intent(MainActivity.this, Inicio.class);
+                startActivity(i);
+
+            }catch (Exception e){
+                Log.i("myTag", e.getMessage());
+            }
         }
     }
 
@@ -106,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                 inputStream.close();
 
                 result = sBuilder.toString();
+                Log.i("myTag", result);
+
 
             } catch (Exception e) {
                 e.printStackTrace();

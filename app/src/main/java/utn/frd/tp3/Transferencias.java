@@ -45,6 +45,7 @@ public class Transferencias extends AppCompatActivity {
                     Log.i("myTag", jsonString);
                     new MiAsyncTask().execute(urlRealizarTranf,"POST",jsonString);
                 }catch(JSONException e ){
+                    Log.i("myTag", e.getMessage());
 
                 }
             }
@@ -68,7 +69,22 @@ public class Transferencias extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             final TextView helloTextView = findViewById(R.id.text_transferencia);
+            try{
+                JSONObject jsonResponse = new JSONObject(result);
+                if(jsonResponse.has("flag_error")){
+                    if(jsonResponse.getInt("flag_error") == 0){
+                        result = jsonResponse.getString("mensaje");
+                    }else {
+                        result = jsonResponse.getString("error");
+                    }
+                }
+
+            }catch (JSONException e){
+                Log.i("myTag", e.getMessage());
+            }
             helloTextView.setText(result);
+            Log.i("myTag", result);
+
         }
     }
 }

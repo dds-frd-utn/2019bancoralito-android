@@ -96,7 +96,8 @@ public class Inicio extends AppCompatActivity
             Intent i = new Intent(Inicio.this, Compras.class);
             startActivity(i);
         } else if (id == R.id.nav_bonos) {
-
+            Intent i = new Intent(Inicio.this, Bonos.class);
+            startActivity(i);
         } else if (id == R.id.nav_change_password) {
 
         } else if (id == R.id.nav_salir) {
